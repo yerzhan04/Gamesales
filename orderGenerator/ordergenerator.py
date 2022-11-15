@@ -1,6 +1,8 @@
-import random
-import urllib.parse
+from urllib import request, parse
 
 url = 'http://127.0.0.1:8080/transaction'
-params = {'var1': 'some data', 'var2': 1337}
-print(url + urllib.parse.urlencode(params))
+data = {'test1': 10, 'test2': 20}
+data = parse.urlencode(data).encode()
+
+req = request.Request(url, data=data)
+response = request.urlopen(req)

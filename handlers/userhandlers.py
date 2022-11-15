@@ -19,22 +19,31 @@ async def get_all_games():
     return lst
 
 
+@router.get('/games/search')
+async def search_game(name: str = None, genre: str = None, minp: int = None, maxp: int = None):
+    lst = []
+    with db_session:
+        if maxp is not None and minp is not None:
+            for data in Game.select(lambda p: p.price >= minp and p.price <= maxp):
+                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                lst.append(game)
+        if name is not None:
+            for data in Game.select(lambda p: p.title.lower() == name.lower()):
+                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                lst.append(game)
+        if genre is not None:
+            for data in Game.select(lambda p: p.categories.lower() == genre.lower()):
+                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                lst.append(game)
+    return lst
+
+
 @router.get('/games/{gid}')
 async def get_single_game(gid: int):
     with db_session:
         data = Game[gid]
 
     return {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
-
-
-@router.get('/games/search')
-async def search_game(name: str = None, genre: str = None, minp: int = None, maxp: int = None):
-    lst=[]
-    with db_session:
-        for data in Game.select(lambda p: p.price >= minp and p.price <= maxp):
-            game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
-            lst.append(game)
-    return lst
 
 
 @router.post('/games/transaction', response_model=Transaction)
