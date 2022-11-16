@@ -1,9 +1,7 @@
-from datetime import datetime
 
 from fastapi import APIRouter
-from pony.orm import db_session
 
-from db.connection import Game, Sale
+from db import games,sales
 from models.pydanticSchemes import Transaction
 
 router = APIRouter()
@@ -11,49 +9,22 @@ router = APIRouter()
 
 @router.get("/games")
 async def get_all_games(start: int, end: int):
-    lst = []
-    with db_session:
-        for data in Game.select():
-            game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories.split(',')}
-            lst.append(game)
-    return lst[start:start + end]
+    return games.get_games(start,end)
 
 
 @router.get('/games/search')
 async def search_game(name: str = None, genre: str = None, minp: int = None, maxp: int = None):
-    lst = []
-    with db_session:
-        if maxp is not None and minp is not None:
-            for data in Game.select(lambda p: p.price >= minp and p.price <= maxp):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
-        if name is not None:
-            for data in Game.select(lambda p: p.title.lower() == name.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
-        if genre is not None:
-            for data in Game.select(lambda p: p.categories.lower() == genre.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
-    return lst
+    return games.search_game(name, genre, minp, maxp)
 
 
 @router.get('/games/{gid}')
 async def get_single_game(gid: int):
-    with db_session:
-        data = Game[gid]
-
-    return {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories.split(',')}
+    return games.get_by_id(gid)
 
 
 @router.post('/games/transaction', response_model=Transaction)
 async def buy_game(sale: Transaction):
-    with db_session:
-        game = Game[sale.id]
-        Sale(date=datetime.now(), game=game.id, s_price=game.price * 1.05, user_card=sale.card)
+    sales.buy_game(sale.id, sale.card)
     return sale
 
 
