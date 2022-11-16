@@ -11,14 +11,16 @@ router = APIRouter(dependencies=[Depends(get_token_header)],
 
 @router.post("/games", response_model=GameBase)
 async def create_game(game: GameBase):
+    genres = ",".join(game.categories)
     with db_session:
         Game(add_date=datetime.now(), edit_date=datetime.now(), title=game.name, price=game.price,
-                    categories=game.categories)
+                    categories=genres)
     return game
 
 
 @router.put("/games", response_model=GameBase)
 async def update_game(gid: int, game: GameBase):
+    genres = ",".join(game.categories)
     with db_session:
         data = Game[gid]
         if game.name is not None:
@@ -26,7 +28,7 @@ async def update_game(gid: int, game: GameBase):
         if game.price is not None:
             data.price = game.price
         if game.categories is not None:
-            data.categories = game.categories
+            data.categories = genres
         data.edit_date = datetime.now()
 
     return game
@@ -55,7 +57,6 @@ async def get_salestats(start_date: date, end_date: date):
         query = Sale.select(lambda p: p.date >= start_date and p.date <= end_date)
         total_sales =  query.count()
         sum_of_sales = sum(s.s_price for s in query)
-
 
     return {"total": total_sales, "sum": sum_of_sales}
 

@@ -6,3 +6,6 @@ data = parse.urlencode(data).encode()
 
 req = request.Request(url, data=data)
 response = request.urlopen(req)
+
+while True:
+    pass

@@ -1,14 +1,15 @@
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class GameBase(BaseModel):
-    name: str
+    name: str = Field(..., max_length=150)
     price: float
-    categories: str
+    categories: List[str]
 
 
 class Transaction(BaseModel):
     exp: str
-    card: str
+    card: str = Field(..., min_length=16, max_length=16)
+    cvv: int
