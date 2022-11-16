@@ -10,13 +10,13 @@ router = APIRouter()
 
 
 @router.get("/games")
-async def get_all_games():
+async def get_all_games(start: int, end: int):
     lst = []
     with db_session:
         for data in Game.select():
-            game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+            game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories.split(',')}
             lst.append(game)
-    return lst
+    return lst[start:start + end]
 
 
 @router.get('/games/search')
@@ -25,15 +25,18 @@ async def search_game(name: str = None, genre: str = None, minp: int = None, max
     with db_session:
         if maxp is not None and minp is not None:
             for data in Game.select(lambda p: p.price >= minp and p.price <= maxp):
-                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                game = {"id": data.id, "name": data.title, "price": data.price,
+                        "categories": data.categories.split(',')}
                 lst.append(game)
         if name is not None:
             for data in Game.select(lambda p: p.title.lower() == name.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                game = {"id": data.id, "name": data.title, "price": data.price,
+                        "categories": data.categories.split(',')}
                 lst.append(game)
         if genre is not None:
             for data in Game.select(lambda p: p.categories.lower() == genre.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+                game = {"id": data.id, "name": data.title, "price": data.price,
+                        "categories": data.categories.split(',')}
                 lst.append(game)
     return lst
 
@@ -43,13 +46,13 @@ async def get_single_game(gid: int):
     with db_session:
         data = Game[gid]
 
-    return {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories}
+    return {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories.split(',')}
 
 
 @router.post('/games/transaction', response_model=Transaction)
-async def buy_game(gid: int, sale: Transaction):
+async def buy_game(sale: Transaction):
     with db_session:
-        game = Game[gid]
+        game = Game[sale.id]
         Sale(date=datetime.now(), game=game.id, s_price=game.price * 1.05, user_card=sale.card)
     return sale
 

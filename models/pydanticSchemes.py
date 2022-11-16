@@ -10,6 +10,7 @@ class GameBase(BaseModel):
 
 
 class Transaction(BaseModel):
+    id: int
     exp: str
     card: str = Field(..., min_length=16, max_length=16)
-    cvv: int
+    cvv: str = Field(..., min_length=3, max_length=3)

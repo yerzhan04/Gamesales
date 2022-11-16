@@ -14,7 +14,7 @@ async def create_game(game: GameBase):
     genres = ",".join(game.categories)
     with db_session:
         Game(add_date=datetime.now(), edit_date=datetime.now(), title=game.name, price=game.price,
-                    categories=genres)
+             categories=genres)
     return game
 
 
@@ -55,12 +55,13 @@ async def get_salelist(start_date: date, end_date: date):
 async def get_salestats(start_date: date, end_date: date):
     with db_session:
         query = Sale.select(lambda p: p.date >= start_date and p.date <= end_date)
-        total_sales =  query.count()
+        total_sales = query.count()
         sum_of_sales = sum(s.s_price for s in query)
 
     return {"total": total_sales, "sum": sum_of_sales}
 
-#sum(s.gpa for s in Student if s.group.number == 101)
+
+# sum(s.gpa for s in Student if s.group.number == 101)
 
 """
 @db_session
