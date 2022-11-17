@@ -10,6 +10,7 @@ def create_game(name, price, genre):
             raise HTTPException(status_code=404, detail="Table not found")
         Game(add_date=datetime.now(), edit_date=datetime.now(), title=name, price=price,
              categories=genre)
+    return HTTPException(status_code=201, detail="Game created")
 
 
 def update_game(gid: int, name: None, price: None, genre: None):
@@ -59,7 +60,7 @@ def del_by_id(gid):
             raise HTTPException(status_code=404, detail="Game not found")
         data = Game[gid]
         data.delete()
-        return HTTPException(status_code=200, detail="Game deleted")
+        return HTTPException(status_code=204, detail="Game deleted")
 
 
 def get_games(start, end):
