@@ -29,6 +29,7 @@ async def delete_game(gid: int):
     games.del_by_id(gid)
 
 
+
 @router.get("/list")
 async def get_salelist(start_date: date, end_date: date):
     return sales.get_list(start_date, end_date)
