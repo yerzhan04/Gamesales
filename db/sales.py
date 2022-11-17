@@ -41,5 +41,4 @@ def get_stats(start_date, end_date):
         total_sales = query.count()
         sum_of_sales = sum(s.s_price for s in query)
 
-
     return {"total": total_sales, "sum": sum_of_sales}

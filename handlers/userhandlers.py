@@ -1,7 +1,6 @@
-
 from fastapi import APIRouter
 
-from db import games,sales
+from db import games, sales
 from models.pydanticSchemes import Transaction
 
 router = APIRouter()
@@ -9,7 +8,7 @@ router = APIRouter()
 
 @router.get("/games")
 async def get_all_games(start: int, end: int):
-    return games.get_games(start,end)
+    return games.get_games(start, end)
 
 
 @router.get('/games/search')
