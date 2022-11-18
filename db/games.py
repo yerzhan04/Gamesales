@@ -95,7 +95,7 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
 
         elif maxp and minp:
             for data in lst:
-                if maxp > data["price"] > minp:
+                if maxp >= data["price"] >= minp:
                     lst1.append(data)
 
 
@@ -127,13 +127,13 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
 
         elif maxp:
             for data in lst:
-                if data["price"] < maxp:
+                if data["price"] <= maxp:
                     lst1.append(data)
 
 
         elif minp:
             for data in lst:
-                if data["price"] > minp:
+                if data["price"] >= minp:
                     lst1.append(data)
 
 
