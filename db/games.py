@@ -80,6 +80,7 @@ def get_games(start, end):
 def search_game(name=None, genre=None, minp=None, maxp=None):
     lst = []
     lst1 = []
+    lst2 = []
     with db_session:
         if not Game.select().exists():
             raise HTTPException(status_code=404, detail="Table not found")
@@ -95,19 +96,19 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
 
     if genre and minp and maxp:
         for data in lst:
-            if maxp > data["price"] > minp and genre.lower() in [x.lower() for x in data["categories"]]:
+            if maxp >= data["price"] >= minp and genre.lower() in [x.lower() for x in data["categories"]]:
                 lst1.append(data)
         return lst1
 
     if genre and minp:
         for data in lst:
-            if data["price"] > minp and genre.lower() in [x.lower() for x in data["categories"]]:
+            if data["price"] >= minp and genre.lower() in [x.lower() for x in data["categories"]]:
                 lst1.append(data)
         return lst1
 
     if genre and maxp:
         for data in lst:
-            if data["price"] < maxp and genre.lower() in [x.lower() for x in data["categories"]]:
+            if data["price"] <= maxp and genre.lower() in [x.lower() for x in data["categories"]]:
                 lst1.append(data)
         return lst1
 
