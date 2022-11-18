@@ -80,7 +80,6 @@ def get_games(start, end):
 def search_game(name=None, genre=None, minp=None, maxp=None):
     lst = []
     lst1 = []
-    lst2 = []
     with db_session:
         if not Game.select().exists():
             raise HTTPException(status_code=404, detail="Table not found")
@@ -140,4 +139,3 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
         raise HTTPException(status_code=404, detail="Item not found")
 
 
-print(search_game(minp=1, maxp= 16, genre="action"))
