@@ -95,9 +95,8 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
 
     if genre and minp and maxp:
         for data in lst:
-            if genre.lower() in [x.lower() for x in data["categories"]]:
-                if maxp > data["price"] > minp:
-                    lst1.append(data)
+            if maxp > data["price"] > minp and genre.lower() in [x.lower() for x in data["categories"]]:
+                lst1.append(data)
         return lst1
 
     if genre and minp:
@@ -140,4 +139,4 @@ def search_game(name=None, genre=None, minp=None, maxp=None):
         raise HTTPException(status_code=404, detail="Item not found")
 
 
-#print(search_game(minp=1, maxp= 16, genre="action"))
+print(search_game(minp=1, maxp= 16, genre="action"))
