@@ -13,7 +13,7 @@ async def get_all_games(start: int, end: int):
 
 @router.get('/games/search')
 async def search_game(name: str = None, genre: str = None, minp: int = None, maxp: int = None):
-    return games.search_game(name, genre, minp, maxp)
+    return games.search_game(name=name, genre=genre, minp=minp, maxp=maxp)
 
 
 @router.get('/games/{gid}')

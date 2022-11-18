@@ -77,35 +77,67 @@ def get_games(start, end):
     return lst[start:start + end]
 
 
-def search_game(name, genre, minp, maxp):
+def search_game(name=None, genre=None, minp=None, maxp=None):
     lst = []
+    lst1 = []
     with db_session:
         if not Game.select().exists():
             raise HTTPException(status_code=404, detail="Table not found")
-        if name is not None:
-            for data in Game.select(lambda p: p.title.lower() == name.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
+        for data in Game.select():
+            game = {"id": data.id, "name": data.title, "price": data.price, "categories": data.categories.split(',')}
+            lst.append(game)
 
-        if genre is not None:
-            for data in Game.select(lambda p: genre.lower() in p.categories.lower()):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
+    if maxp and minp:
+        for data in lst:
+            if maxp > data["price"] > minp:
+                lst1.append(data)
+        return lst1
 
-        if maxp is not None:
-            for data in Game.select(lambda p: p.price <= maxp):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
+    if genre and minp and maxp:
+        for data in lst:
+            if genre.lower() in [x.lower() for x in data["categories"]]:
+                if maxp > data["price"] > minp:
+                    lst1.append(data)
+        return lst1
 
-        if minp is not None:
-            for data in Game.select(lambda p: p.price >= minp):
-                game = {"id": data.id, "name": data.title, "price": data.price,
-                        "categories": data.categories.split(',')}
-                lst.append(game)
+    if genre and minp:
+        for data in lst:
+            if data["price"] > minp and genre.lower() in [x.lower() for x in data["categories"]]:
+                lst1.append(data)
+        return lst1
 
-    if len(lst) == 0:
+    if genre and maxp:
+        for data in lst:
+            if data["price"] < maxp and genre.lower() in [x.lower() for x in data["categories"]]:
+                lst1.append(data)
+        return lst1
+
+    if name:
+        for data in lst:
+            if data["name"].lower() == name.lower():
+                lst1.append(data)
+        return lst1
+
+    if genre:
+        for data in lst:
+            if genre.lower() in [x.lower() for x in data["categories"]]:
+                lst1.append(data)
+        return lst1
+
+    if maxp:
+        for data in lst:
+            if data["price"] < maxp:
+                lst1.append(data)
+        return lst1
+
+    if minp:
+        for data in lst:
+            if data["price"] > minp:
+                lst1.append(data)
+        return lst1
+
+    if len(lst1) == 0:
         raise HTTPException(status_code=404, detail="Item not found")
-    return lst
+
+
+#print(search_game(minp=1, maxp= 16, genre="action"))
