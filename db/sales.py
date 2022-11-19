@@ -1,8 +1,8 @@
 from datetime import datetime
 from fastapi import HTTPException
-from pony.orm import desc
+from pony.orm import desc, select, count
 
-from db.connection import Sale, Game, db_session
+from db.connection import Sale, Game, db_session, db
 
 
 def buy_game(gid, card):
@@ -40,5 +40,8 @@ def get_stats(start_date, end_date):
         query = Sale.select(lambda p: p.date >= start_date and p.date <= end_date)
         total_sales = query.count()
         sum_of_sales = sum(s.s_price for s in query)
+        popular = max(select((count(), s.game) for s in Sale))
+        game = popular[1].title
+        game_total = popular[0]
 
-    return {"total": total_sales, "sum": sum_of_sales}
+    return {"total": total_sales, "sum": sum_of_sales, "popular_game": game, "popular_sales": game_total}
