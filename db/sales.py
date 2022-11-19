@@ -1,8 +1,9 @@
 from datetime import datetime
-from fastapi import HTTPException
-from pony.orm import desc, select, count
 
-from db.connection import Sale, Game, db_session, db
+from fastapi import HTTPException
+from pony.orm import select, count
+
+from db.connection import Sale, Game, db_session
 
 
 def buy_game(gid, card):

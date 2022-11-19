@@ -25,10 +25,3 @@ async def get_single_game(gid: int):
 async def buy_game(sale: Transaction):
     sales.buy_game(sale.id, sale.card)
     return sale
-
-
-"""
-s1 = Sale(date='2022-11-10 22:41:51', game=g1, s_price=g1.price*1.05,  user_card='1234567891011130')
-s2 = Sale(date='2022-11-10 22:41:51', game=g2, s_price=g2.price*1.05, user_card='1234567892011130')
-s3 = Sale(date='2022-11-10 22:41:51', game=g3, s_price=g3.price*1.05, user_card='1234567893031130')
-"""
